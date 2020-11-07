@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev
+jwt:
+  header: Authorization
+  secret: d5e863ecebffe75d0dd0fe1f1f773b22
+  expiration: 8000000
+  authServerName: SOCIALMEDIA_AUTH_SERVER
+
+blowfish:
+  secretkey: 5def0067271ea7a0616fa6188ccd1224
+
+socialmedia:
+  version: v0.0.1
+
+

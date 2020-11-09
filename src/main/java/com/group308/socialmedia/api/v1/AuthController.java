@@ -59,7 +59,8 @@ public class AuthController {
         final String password = passwordService.decryptPassword(userDetails.getPassword());
 
         if (!password.equals(request.getPassword())) {
-            throw new ResourceNotFoundException("NotFound.general.message",request.getUsername());
+            //throw new ResourceNotFoundException("NotFound.general.message",request.getUsername());
+            return ResponseEntity.notFound().build();
         }
 
         if (password.equals(request.getPassword())) {

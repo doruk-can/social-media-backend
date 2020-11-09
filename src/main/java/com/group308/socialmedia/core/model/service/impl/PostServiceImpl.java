@@ -1,5 +1,6 @@
 package com.group308.socialmedia.core.model.service.impl;
 
+import com.group308.socialmedia.core.dto.PostDto;
 import com.group308.socialmedia.core.model.domain.Post;
 import com.group308.socialmedia.core.model.repository.PostRepository;
 import com.group308.socialmedia.core.model.service.PostService;
@@ -32,6 +33,20 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteById(Long id) {
         this.postRepository.deleteById(id);
+    }
+
+    public void update(long postId, PostDto postDto) {
+
+        Post post = findById(postId);
+        post.setPostLocationLatitude(postDto.getPostLocationLatitude());
+        post.setPostLocationLongitude(postDto.getPostLocationLongitude());
+        post.setPostImage(postDto.getPostImage());
+        post.setPostOwnerName(postDto.getPostOwnerName());
+        post.setPostText(postDto.getPostText());
+        post.setPostTopic(postDto.getPostTopic());
+        post.setPostVideoURL(postDto.getPostVideoURL());
+
+        save(post);
     }
 
 }

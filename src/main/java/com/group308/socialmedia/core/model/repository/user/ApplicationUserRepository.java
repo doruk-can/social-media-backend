@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface ApplicationUserRepository extends BaseRepository<ApplicationUser, Long> {
 
     Optional<ApplicationUser> findByUsername(String userName);
+
+    Optional<ApplicationUser> findByEmail(String email);
+
+    Optional<ApplicationUser> findByEmailAndUsername(String email, String userName);
 }

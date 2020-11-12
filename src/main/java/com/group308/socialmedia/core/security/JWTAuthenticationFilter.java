@@ -33,10 +33,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain chain) throws IOException, ServletException {
 
-        if (request.getMethod().equals("POST") && request.getRequestURI().equals("/api/v1/auth/login")){
+        if (request.getMethod().equals("POST") && request.getRequestURI().startsWith("/api/v1/auth")){
             chain.doFilter(request, response);
             return;
         }
+
 
 
         final String requestHeader = request.getHeader(jwtTokenHelper.getKeyFromProperties(JwtProperties::getHeader));

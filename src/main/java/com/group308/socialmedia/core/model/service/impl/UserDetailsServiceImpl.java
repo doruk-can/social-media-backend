@@ -56,4 +56,5 @@ class UserDetailsServiceImpl implements UserDetailsService {
                 authorities,
                 appUser.getLastPasswordResetDate());
     }
+
 }

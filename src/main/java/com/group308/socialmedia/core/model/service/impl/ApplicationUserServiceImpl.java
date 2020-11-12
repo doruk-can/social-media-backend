@@ -22,6 +22,16 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
     }
 
     @Override
+    public ApplicationUser findByEmail(String email) {
+        return applicationUserRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public ApplicationUser findByEmailAndUsername(String email, String userName) {
+        return applicationUserRepository.findByEmailAndUsername(email, userName).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
     public ApplicationUser findById(Long id) {
         return applicationUserRepository.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
@@ -41,4 +51,5 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
     public void deleteById(Long id) {
         applicationUserRepository.deleteById(id);
     }
+
 }

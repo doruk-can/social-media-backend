@@ -36,7 +36,7 @@ public class UserProfileController {
            // String emailUser = applicationUserService.findByEmailAndUsername(appUserDto.getEmail(), appUserDto.getUsername()).getEmail();
             String email = applicationUserService.findByEmail(appUserDto.getEmail()).getEmail();
             return new ResponseEntity<>(RestResponse.of("User email already exists", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
-               
+
         } catch(Exception e){
             System.out.println("No error");
         }

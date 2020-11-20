@@ -102,7 +102,6 @@ public class AuthController {
                 return new ResponseEntity<>(RestResponse.of("Username already exists", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
             }
         } catch(Exception e){
-            System.out.println("Username already exist");
         }
         try {
             String email = applicationUserService.findByEmail(appUserDto.getEmail()).getEmail();
@@ -110,7 +109,6 @@ public class AuthController {
                 return new ResponseEntity<>(RestResponse.of("Email already exists", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
             }
         } catch(Exception e){
-            System.out.println("Email already exist");
         }
 
         final String password = passwordService.encryptPassword(appUserDto.getPassword());

@@ -58,7 +58,7 @@ public class PostInteractionController {
                     return new ResponseEntity<>(RestResponse.of("User disliked the post that she liked before", Status.SUCCESS, ""), HttpStatus.OK);
                 }
                  if (postInteractionCheck1 != null) {
-                    return new ResponseEntity<>(RestResponse.of("User can't like or dislike same post twice", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>(RestResponse.of("Users are not allowed to like or dislike same post twice", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
                  }
             }
             throw new Exception("There is no error");

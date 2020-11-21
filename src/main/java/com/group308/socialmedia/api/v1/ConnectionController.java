@@ -44,15 +44,11 @@ private final ApplicationUserService applicationUserService;
                 return new ResponseEntity<>(RestResponse.of("User can't follow same user twice", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
             }
         } catch(Exception e){
-
             connectionService.save(connection);
-
             return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
-
         }
 
         connectionService.save(connection);
-
         return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
     }
 

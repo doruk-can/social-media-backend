@@ -2,10 +2,14 @@ package com.group308.socialmedia.api.v1;
 
 
 import com.group308.socialmedia.core.dto.PostInteractionDto;
+import com.group308.socialmedia.core.dto.SubscriptionDto;
 import com.group308.socialmedia.core.dto.common.RestResponse;
 import com.group308.socialmedia.core.dto.common.Status;
+import com.group308.socialmedia.core.model.domain.Content;
+import com.group308.socialmedia.core.model.domain.Post;
 import com.group308.socialmedia.core.model.domain.PostInteraction;
-import com.group308.socialmedia.core.model.service.PostInteractionService;
+import com.group308.socialmedia.core.model.domain.Subscription;
+import com.group308.socialmedia.core.model.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +28,14 @@ import java.io.IOException;
 public class PostInteractionController {
 
     private final PostInteractionService postInteractionService;
+
+    private final PostService postService;
+
+    private final ContentService contentService;
+
+    private final SubscriptionService subscriptionService;
+
+    private final ApplicationUserService applicationUserService;
 
     @PostMapping("/")
     public ResponseEntity<RestResponse<String>> interactWithPost(@RequestBody PostInteractionDto postInteractionDto) throws IOException {
@@ -75,5 +87,32 @@ public class PostInteractionController {
             postInteractionService.save(postInteraction);
             return new ResponseEntity<>(RestResponse.of("Interaction is done", Status.SUCCESS,""), HttpStatus.OK);
         }
+    }
+
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<RestResponse<String>> subscribeContent(@RequestBody SubscriptionDto subscriptionDto) {
+
+        Subscription subscription = new Subscription();
+        subscription.setSubscriberId(applicationUserService.findByUsername(subscriptionDto.getSubscriberUsername()).getId());
+        Post post = postService.findById(subscriptionDto.getPostId());
+        if(subscriptionDto.getSubscribedContentType().equals("topic"))
+            subscription.setSubscribedContentId(contentService.findByTopic(post.getPostTopic()).getId());
+        else if (subscriptionDto.getSubscribedContentType().equals("geo"))
+            subscription.setSubscribedContentId(contentService.
+                    findByGeoLatitudeAndGeoLongitude(post.getPostLocationLatitude(),
+                            post.getPostLocationLongitude()).getId());
+
+
+        try { //checking if there is already that subscription
+            Subscription subscriptionCheck = subscriptionService.
+                    findBySubscriberIdAndSubscribedContentId(subscription.getSubscriberId(), subscription.getSubscribedContentId());
+            return new ResponseEntity<>(RestResponse.of("User can't subscribe to same content twice", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+        }
+
+        subscriptionService.save(subscription);
+
+        return new ResponseEntity<>(RestResponse.of("Subscribed to a content", Status.SUCCESS,""), HttpStatus.OK);
     }
 }

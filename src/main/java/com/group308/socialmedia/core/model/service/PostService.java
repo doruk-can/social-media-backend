@@ -7,4 +7,6 @@ public interface PostService extends BaseService<Post> {
 
     void update(long postId, PostDto postDto);
 
+    Post findAllByPostOwnerName(String postOwnerName);
+
 }

@@ -40,8 +40,8 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public Content findByGeoLatitudeAndGeoLongitude(long geoLatitude, long geoLongitude) {
-        return contentRepository.findByGeoLatitudeAndGeoLongitude(geoLatitude, geoLongitude).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    public Content findByGeoId(long geoId) {
+        return contentRepository.findByGeoId(geoId).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
     }
 
 }

@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends BaseRepository<Subscription, Long> {
     Optional<Subscription> findBySubscriberIdAndSubscribedContentId(long subscriberId, long subscribedContentId);
+
 }

@@ -39,11 +39,11 @@ public class Post extends AbstractEntity {
     @Column(name = "post_topic")
     private String postTopic;
 
-    @Column(name = "post_location_latitude")
-    private long postLocationLatitude;
+    @Column(name = "post_geo_id")
+    private long postGeoId;
 
-    @Column(name = "post_location_longitude")
-    private long postLocationLongitude;
+    @Column(name = "post_geo_name")
+    private String postGeoName;
 
 
 }

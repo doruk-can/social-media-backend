@@ -33,9 +33,7 @@ public class Content extends AbstractEntity {
         @Column(name = "topic")
         private String topic;
 
-        @Column(name = "geo_latitude")
-        private long geoLatitude;
+        @Column(name = "geo_Id")
+        private long geoId;
 
-        @Column(name = "geo_longitude")
-        private long geoLongitude;
 }

@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface ContentRepository extends BaseRepository<Content, Long> {
     Optional<Content> findByTopic(String topic);
-    Optional<Content> findByGeoLatitudeAndGeoLongitude(long geoLatitude, long geoLongitude);
+    Optional<Content> findByGeoId(long geoId);
 }

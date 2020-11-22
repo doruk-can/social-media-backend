@@ -1,5 +1,6 @@
 package com.group308.socialmedia.core.dto;
 
+
 import com.group308.socialmedia.core.dto.common.SuperDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class PostDto extends SuperDto {
+public class FeedDto extends SuperDto {
+
+    private long postId;
 
     private String postOwnerName;
 
@@ -25,4 +28,11 @@ public class PostDto extends SuperDto {
     private long postGeoId;
 
     private String postGeoName;
+
+    private long totalPostLike;
+
+    private long totalPostDislike;
+
+    private PostInteractionDto postInteractionDto;
+
 }

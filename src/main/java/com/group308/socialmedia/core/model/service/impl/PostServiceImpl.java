@@ -38,8 +38,8 @@ public class PostServiceImpl implements PostService {
     public void update(long postId, PostDto postDto) {
 
         Post post = findById(postId);
-        post.setPostLocationLatitude(postDto.getPostLocationLatitude());
-        post.setPostLocationLongitude(postDto.getPostLocationLongitude());
+        post.setPostGeoId(postDto.getPostGeoId());
+        post.setPostGeoName(postDto.getPostGeoName());
         post.setPostImage(postDto.getPostImage());
         post.setPostOwnerName(postDto.getPostOwnerName());
         post.setPostText(postDto.getPostText());
@@ -47,6 +47,11 @@ public class PostServiceImpl implements PostService {
         post.setPostVideoURL(postDto.getPostVideoURL());
 
         save(post);
+    }
+
+    @Override
+    public Post findAllByPostOwnerName(String postOwnerName) {
+        return postRepository.findAllByPostOwnerName(postOwnerName);
     }
 
 }

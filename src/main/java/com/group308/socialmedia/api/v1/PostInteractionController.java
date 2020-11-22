@@ -100,8 +100,7 @@ public class PostInteractionController {
             subscription.setSubscribedContentId(contentService.findByTopic(post.getPostTopic()).getId());
         else if (subscriptionDto.getSubscribedContentType().equals("geo"))
             subscription.setSubscribedContentId(contentService.
-                    findByGeoLatitudeAndGeoLongitude(post.getPostLocationLatitude(),
-                            post.getPostLocationLongitude()).getId());
+                    findByGeoId(post.getPostGeoId()).getId());
 
 
         try { //checking if there is already that subscription

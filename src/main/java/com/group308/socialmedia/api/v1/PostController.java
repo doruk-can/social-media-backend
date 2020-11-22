@@ -14,11 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 @Slf4j
 @RestController
@@ -63,12 +59,11 @@ public class PostController {
                 contentService.save(content1);
             }
         }
-        if (postDto.getPostLocationLatitude() != 0) {
+        if (postDto.getPostGeoId() != 0) {
             content2.setContentType("geo");
-            content2.setGeoLatitude(postDto.getPostLocationLatitude());
-            content2.setGeoLongitude(postDto.getPostLocationLongitude());
+            content2.setGeoId(postDto.getPostGeoId());
             try {
-                contentService.findByGeoLatitudeAndGeoLongitude(content2.getGeoLatitude(), content2.getGeoLongitude());
+                contentService.findByGeoId(content2.getGeoId());
             } catch (Exception e) {
                 contentService.save(content2);
             }

@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -99,6 +96,7 @@ public class FeedController {
             tempFeedPostWithInteractionDto.setPostText(feedPosts.get(i).getPostText());
             tempFeedPostWithInteractionDto.setPostTopic(feedPosts.get(i).getPostTopic());
             tempFeedPostWithInteractionDto.setPostVideoURL(feedPosts.get(i).getPostVideoURL());
+            tempFeedPostWithInteractionDto.setPostDate(feedPosts.get(i).getCreatedDate());// adding date to sort posts
 
             try { // if there is no like or dislike summing them up could cause error
                 long totalLike = postInteractionService.sumPostLike(feedPosts.get(i).getId());
@@ -128,6 +126,9 @@ public class FeedController {
             feedPostsWithInteraction.add(tempFeedPostWithInteractionDto);
 
         }
+
+        feedPostsWithInteraction.sort(Comparator.comparing(FeedDto::getPostDate).reversed()); //sorting posts
+
 
         return new ResponseEntity<>(RestResponse.of(feedPostsWithInteraction, Status.SUCCESS, ""), HttpStatus.OK);
     }

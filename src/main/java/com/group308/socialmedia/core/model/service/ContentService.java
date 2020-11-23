@@ -4,5 +4,5 @@ import com.group308.socialmedia.core.model.domain.Content;
 
 public interface ContentService extends BaseService<Content> {
     Content findByTopic(String topic);
-    Content findByGeoId(long geoId);
+    Content findByGeoId(String geoId);
 }

@@ -8,6 +8,7 @@ import com.group308.socialmedia.core.model.service.PostInteractionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,5 +42,19 @@ public class PostInteractionServiceImpl implements PostInteractionService {
         return postInteractionRepository.findByPostIdAndCommentatorIdAndInteractionType(postId, commentatorId, interactionType).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
     }
 
+    @Override
+    public List<PostInteraction> findAllByPostId(long postId) {
+        return postInteractionRepository.findAllByPostId(postId);
+    }
+
+    @Override
+    public long sumPostLike(long postId) {
+        return postInteractionRepository.sumPostLike(postId);
+    }
+
+    @Override
+    public long sumPostDislike(long postId) {
+        return postInteractionRepository.sumPostDislike(postId);
+    }
 
 }

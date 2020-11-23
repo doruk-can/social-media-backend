@@ -9,6 +9,8 @@ import com.group308.socialmedia.core.model.service.SubscriptionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -39,6 +41,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     public Subscription findBySubscriberIdAndSubscribedContentId(long subscriberId, long subscribedContentId) {
         return subscriptionRepository.findBySubscriberIdAndSubscribedContentId(subscriberId,subscribedContentId).
                 orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public List<Subscription> findAllBySubscriberId(long subscriberId) {
+        return subscriptionRepository.findAllBySubscriberId(subscriberId);
     }
 
 }

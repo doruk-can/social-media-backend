@@ -59,7 +59,7 @@ public class PostController {
                 contentService.save(content1);
             }
         }
-        if (postDto.getPostGeoId() != 0) {
+        if (postDto.getPostGeoId() != null) {
             content2.setContentType("geo");
             content2.setGeoId(postDto.getPostGeoId());
             try {

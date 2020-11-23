@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @ToString(callSuper = true)
@@ -25,7 +27,7 @@ public class FeedDto extends SuperDto {
 
     private String postVideoURL;
 
-    private long postGeoId;
+    private String postGeoId;
 
     private String postGeoName;
 
@@ -33,6 +35,6 @@ public class FeedDto extends SuperDto {
 
     private long totalPostDislike;
 
-    private PostInteractionDto postInteractionDto;
+    private List<PostInteractionDto> postInteractionDto;
 
 }

@@ -7,6 +7,8 @@ import com.group308.socialmedia.core.model.service.ConnectionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ConnectionServiceImpl implements ConnectionService {
@@ -36,5 +38,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public Connection findByFollowerIdAndFollowingId(long followerId, long followingId){
         return connectionRepository.findByFollowerIdAndFollowingId(followerId, followingId).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public List<Connection> findAllByFollowerId(long followerId) {
+        return connectionRepository.findAllByFollowerId(followerId);
     }
 }

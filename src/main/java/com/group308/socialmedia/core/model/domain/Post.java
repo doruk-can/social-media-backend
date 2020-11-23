@@ -40,7 +40,7 @@ public class Post extends AbstractEntity {
     private String postTopic;
 
     @Column(name = "post_geo_id")
-    private long postGeoId;
+    private String postGeoId;
 
     @Column(name = "post_geo_name")
     private String postGeoName;

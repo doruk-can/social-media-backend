@@ -50,8 +50,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post findAllByPostOwnerName(String postOwnerName) {
+    public List<Post> findAllByPostOwnerName(String postOwnerName) {
         return postRepository.findAllByPostOwnerName(postOwnerName);
     }
+
+    @Override
+    public List<Post> findAllByPostGeoIdOrPostTopic(String geoId, String postTopic) {
+        return postRepository.findAllByPostGeoIdOrPostTopic(geoId, postTopic);
+    }
+
 
 }

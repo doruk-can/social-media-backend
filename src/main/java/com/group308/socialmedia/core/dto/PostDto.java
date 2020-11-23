@@ -22,7 +22,7 @@ public class PostDto extends SuperDto {
 
     private String postVideoURL;
 
-    private long postGeoId;
+    private String postGeoId;
 
     private String postGeoName;
 }

@@ -40,7 +40,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Override
-    public Content findByGeoId(long geoId) {
+    public Content findByGeoId(String geoId) {
         return contentRepository.findByGeoId(geoId).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
     }
 

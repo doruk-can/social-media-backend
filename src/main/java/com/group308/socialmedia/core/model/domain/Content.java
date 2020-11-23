@@ -34,6 +34,6 @@ public class Content extends AbstractEntity {
         private String topic;
 
         @Column(name = "geo_Id")
-        private long geoId;
+        private String geoId;
 
 }

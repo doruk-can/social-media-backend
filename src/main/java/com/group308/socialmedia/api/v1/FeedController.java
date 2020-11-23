@@ -1,10 +1,7 @@
 package com.group308.socialmedia.api.v1;
 
 
-import com.group308.socialmedia.core.dto.FeedDto;
-import com.group308.socialmedia.core.dto.PostDto;
-import com.group308.socialmedia.core.dto.PostInteractionDto;
-import com.group308.socialmedia.core.dto.PostMapper;
+import com.group308.socialmedia.core.dto.*;
 import com.group308.socialmedia.core.dto.common.RestResponse;
 import com.group308.socialmedia.core.dto.common.Status;
 import com.group308.socialmedia.core.model.domain.*;
@@ -111,17 +108,18 @@ public class FeedController {
 
             //finding comments of the post
             List<PostInteraction> postInteractionList = postInteractionService.findAllByPostId(feedPosts.get(i).getId());
-            List<PostInteractionDto> postInteractionDtoList = new ArrayList<>();
+            List<PostCommentDto> postCommentDtoList = new ArrayList<>();
             for(int j=0; j< postInteractionList.size(); j++) {
-                PostInteractionDto tempPostInteractionDto = new PostInteractionDto();
-                tempPostInteractionDto.setPostComment(postInteractionList.get(j).getPostComment());
-                tempPostInteractionDto.setCommentatorId(postInteractionList.get(j).getCommentatorId());
-                if (tempPostInteractionDto.getPostComment() == null)
+                PostCommentDto tempPostCommentDto = new PostCommentDto();
+                tempPostCommentDto.setPostComment(postInteractionList.get(j).getPostComment());
+                String commentatorUsername = applicationUserService.findById(postInteractionList.get(j).getCommentatorId()).getUsername();
+                tempPostCommentDto.setCommentatorName(commentatorUsername);
+                if (tempPostCommentDto.getPostComment() == null)
                     continue;
-                postInteractionDtoList.add(tempPostInteractionDto);
+                postCommentDtoList.add(tempPostCommentDto);
             }
 
-            tempFeedPostWithInteractionDto.setPostInteractionDto(postInteractionDtoList);
+            tempFeedPostWithInteractionDto.setPostCommentDto(postCommentDtoList);
 
             feedPostsWithInteraction.add(tempFeedPostWithInteractionDto);
 

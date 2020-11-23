@@ -39,14 +39,7 @@ public class FeedDto extends SuperDto {
 
     private long totalPostDislike;
 
-    private List<PostInteractionDto> postInteractionDto;
-
-   /* @Override
-    public int compareTo(FeedDto o) {
-        return getPostDate().compareTo(o.getPostDate());
-    }*/
-
-
+    private List<PostCommentDto> postCommentDto;
 
 }
 

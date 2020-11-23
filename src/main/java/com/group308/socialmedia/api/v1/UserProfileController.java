@@ -1,6 +1,7 @@
 package com.group308.socialmedia.api.v1;
 
 
+import com.group308.socialmedia.core.dto.FeedDto;
 import com.group308.socialmedia.core.dto.common.RestResponse;
 import com.group308.socialmedia.core.dto.common.Status;
 import com.group308.socialmedia.core.dto.user.AppUserDto;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,8 +29,25 @@ public class UserProfileController {
 
     private final PasswordService passwordService;
 
-    @PutMapping("/edit")
-    public ResponseEntity<RestResponse<String>> editProfile(@RequestBody AppUserDto appUserDto) throws IOException {
+    @GetMapping("/{username}")
+    public ResponseEntity<RestResponse<AppUserDto>> findFeedPosts(@PathVariable("username") String username) {
+
+        ApplicationUser applicationUser = applicationUserService.findByUsername(username);
+        AppUserDto appUserDto = new AppUserDto();
+        appUserDto.setUsername(applicationUser.getUsername());
+        appUserDto.setEmail(applicationUser.getEmail());
+        appUserDto.setProfilePicture(applicationUser.getProfilePicture());
+        appUserDto.setActive(applicationUser.isActive());
+        appUserDto.setDeleted(applicationUser.isDeleted());
+        Date deactivatedUntil = applicationUser.getDeactivatedUntil();
+        appUserDto.setDeactivatedUntil(deactivatedUntil);
+
+        return new ResponseEntity<>(RestResponse.of(appUserDto, Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+    @PutMapping("/{username}/edit")
+    public ResponseEntity<RestResponse<String>> editProfile(@PathVariable("username") String username,
+                                                            @RequestBody AppUserDto appUserDto) throws IOException {
 
 
         final String password = passwordService.encryptPassword(appUserDto.getPassword());
@@ -43,7 +63,7 @@ public class UserProfileController {
 
         final ApplicationUser applicationUser = applicationUserService.findByUsername(appUserDto.getUsername());
 
-        applicationUser.setId(applicationUserService.findByUsername(appUserDto.getUsername()).getId());
+        applicationUser.setId(applicationUserService.findByUsername(username).getId());
         applicationUser.setPassword(password);
         applicationUser.setEmail(appUserDto.getEmail());
         applicationUser.setProfilePicture(appUserDto.getProfilePicture());
@@ -54,5 +74,7 @@ public class UserProfileController {
 
         return new ResponseEntity<>(RestResponse.of("Profile is updated", Status.SUCCESS,""), HttpStatus.OK);
     }
+
+
 
 }

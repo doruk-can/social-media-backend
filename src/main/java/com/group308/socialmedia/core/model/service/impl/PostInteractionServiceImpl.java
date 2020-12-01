@@ -47,6 +47,18 @@ public class PostInteractionServiceImpl implements PostInteractionService {
         return postInteractionRepository.findAllByPostId(postId);
     }
 
+    /*@Override
+    public List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId, long postLike) {
+        return postInteractionRepository.findAllByCommentatorIdAndPostLike(commentatorId, postLike);
+    }
+
+    @Override
+    public List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike) {
+        return postInteractionRepository.findAllByCommentatorIdAndPostDislike(commentatorId, postDislike);
+    }*/
+
+
+
     @Override
     public long sumPostLike(long postId) {
         return postInteractionRepository.sumPostLike(postId);

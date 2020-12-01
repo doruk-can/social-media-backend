@@ -41,6 +41,11 @@ public class FeedDto extends SuperDto {
 
     private List<PostCommentDto> postCommentDto;
 
+    private boolean userLikedIt;
+
+    private boolean userDislikedIt;
+
+
 }
 
 

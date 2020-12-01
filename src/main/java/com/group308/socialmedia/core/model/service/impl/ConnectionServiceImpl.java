@@ -44,4 +44,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     public List<Connection> findAllByFollowerId(long followerId) {
         return connectionRepository.findAllByFollowerId(followerId);
     }
+
+    @Override
+    public List<Connection> findAllByFollowingId(long followingId) {
+        return connectionRepository.findAllByFollowingId(followingId);
+    }
+
 }

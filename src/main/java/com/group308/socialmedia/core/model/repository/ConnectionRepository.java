@@ -13,5 +13,8 @@ public interface ConnectionRepository extends BaseRepository<Connection, Long>{
 
     List<Connection> findAllByFollowerId(long followerId);
 
+    List<Connection> findAllByFollowingId(long followingId);
+
+
 
 }

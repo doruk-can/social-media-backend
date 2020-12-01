@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -35,6 +32,8 @@ public class FeedController {
     private final SubscriptionService subscriptionService;
 
     private final ApplicationUserService applicationUserService;
+
+    private final ReportedContentService reportedContentService;
 
     private final PostMapper postMapper;
 
@@ -146,6 +145,25 @@ public class FeedController {
 
 
         return new ResponseEntity<>(RestResponse.of(feedPostsWithInteraction, Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/{username}/report/{reportedPostId}")
+    public ResponseEntity<RestResponse<String>> reportPost(@PathVariable("username") String username,
+                                                                     @PathVariable("reportedPostId") long reportedPostId) {
+        ReportedContent reportedContent = new ReportedContent();
+        reportedContent.setReportType("post");
+        reportedContent.setReportedPostId(reportedPostId);
+
+        long userId = applicationUserService.findByUsername(username).getId();
+        reportedContent.setReporterId(userId);
+
+            if(reportedContentService.findByReporterIdAndReportedPostId(userId, reportedPostId) == null) //checking if the post already reported
+                reportedContentService.save(reportedContent);
+            else
+                return new ResponseEntity<>(RestResponse.of("Post is already reported", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(RestResponse.of("Post is reported", Status.SUCCESS,""), HttpStatus.OK);
     }
 
 }

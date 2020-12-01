@@ -180,6 +180,42 @@ public class UserProfileController {
         return new ResponseEntity<>(RestResponse.of("Profile is updated", Status.SUCCESS,""), HttpStatus.OK);
     }
 
+    @DeleteMapping("/{username}/removeConnection/{removedUsername}")
+    public ResponseEntity<RestResponse<String>> deleteConnection(@PathVariable("username") String username,
+                                                                 @PathVariable("removedUsername") String deletedUsername) {
+        long userId = applicationUserService.findByUsername(username).getId();
+        long deletedUserId = applicationUserService.findByUsername(deletedUsername).getId();
+
+        long deletedConnectionId = connectionService.findByFollowerIdAndFollowingId(userId, deletedUserId).getId();
+        connectionService.deleteById(deletedConnectionId);
+        return new ResponseEntity<>(RestResponse.of("User is unfollowed", Status.SUCCESS,""), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}/unsubscribeTopic/{unsubscribedTopicName}")
+    public ResponseEntity<RestResponse<String>> deleteTopic(@PathVariable("username") String username,
+                                                                 @PathVariable("unsubscribedTopicName") String deletedTopicName) {
+        deletedTopicName = '#' + deletedTopicName;  // spring doesnt accept # in path variable. Here # character is added.
+        long userId = applicationUserService.findByUsername(username).getId();
+        long topicId = contentService.findByTopic(deletedTopicName).getId();
+
+        long deletedSubscriptionId = subscriptionService.findBySubscriberIdAndSubscribedContentId(userId, topicId).getId();
+
+        subscriptionService.deleteById(deletedSubscriptionId);
+        return new ResponseEntity<>(RestResponse.of("Unsubscription from the topic is completed", Status.SUCCESS,""), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{username}/unsubscribeLocation/{unsubscribedLocationId}")
+    public ResponseEntity<RestResponse<String>> deleteLocation(@PathVariable("username") String username,
+                                                               @PathVariable("unsubscribedLocationId") String deletedLocationId) {
+        long userId = applicationUserService.findByUsername(username).getId();
+        long locationId = contentService.findByGeoId(deletedLocationId).getId();
+
+        long deletedSubscriptionId = subscriptionService.findBySubscriberIdAndSubscribedContentId(userId, locationId).getId();
+
+        subscriptionService.deleteById(deletedSubscriptionId);
+        return new ResponseEntity<>(RestResponse.of("Unsubscription from the location is completed", Status.SUCCESS,""), HttpStatus.OK);
+    }
+
 
 
 }

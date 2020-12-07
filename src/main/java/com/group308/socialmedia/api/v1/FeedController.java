@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,6 +38,9 @@ public class FeedController {
     private final ReportedContentService reportedContentService;
 
     private final PostMapper postMapper;
+
+    private JavaMailSender javaMailSender;
+
 
     @GetMapping("/{username}")
     public ResponseEntity<RestResponse<List<FeedDto>>> findFeedPosts(@PathVariable("username") String username) {
@@ -163,7 +168,25 @@ public class FeedController {
             else
                 return new ResponseEntity<>(RestResponse.of("Post is already reported", Status.SYSTEM_ERROR,""), HttpStatus.NOT_FOUND);
 
+        sendEmail("drukcan@gmail.com");
+
         return new ResponseEntity<>(RestResponse.of("Post is reported", Status.SUCCESS,""), HttpStatus.OK);
     }
 
+    void sendEmail(String mailTo) {
+
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(mailTo);
+
+        msg.setSubject("Report");
+        msg.setText("New post is reported. You may check them in app.");
+
+        javaMailSender.send(msg);
+
+    }
+
 }
+
+
+
+

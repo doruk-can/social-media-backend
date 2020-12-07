@@ -13,9 +13,9 @@ public interface PostInteractionRepository extends BaseRepository<PostInteractio
 
     List<PostInteraction> findAllByPostId(long postId);
 
-    //List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId, long postLike);
+   // List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId, long postLike);
 
-    //List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike);
+   // List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike);
 
 
     @Query("SELECT sum(postInteraction.postLike) from PostInteraction postInteraction where postInteraction.postId = :postId")

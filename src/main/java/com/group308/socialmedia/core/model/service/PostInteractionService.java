@@ -13,7 +13,7 @@ public interface PostInteractionService extends BaseService<PostInteraction> {
 
     //List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId, long postLike);
 
-   // List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike);
+    //List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike);
 
     long sumPostLike(long postId);
 

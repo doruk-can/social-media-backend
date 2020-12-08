@@ -9,8 +9,12 @@ import com.group308.socialmedia.core.model.domain.user.ApplicationUser;
 import com.group308.socialmedia.core.model.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -88,6 +92,18 @@ public class AdminController {
         postService.deleteById(postId);
 
         return new ResponseEntity<>(RestResponse.of("Post is deleted successfully", Status.SUCCESS,""), HttpStatus.OK);
+    }
+
+    @PostMapping("/waitingReportedUsers/suspend/{username}")
+    public ResponseEntity<RestResponse<String>> suspendUser(@PathVariable("username") String username) {
+
+       // applicationUserService.findByUsername(username).setActive(false);
+
+        ApplicationUser appUser = applicationUserService.findByUsername(username);
+        applicationUserService.deleteById(appUser.getId());
+        appUser.setActive(false);
+        applicationUserService.save(appUser);
+        return new ResponseEntity<>(RestResponse.of("User is suspended", Status.SUCCESS,""), HttpStatus.OK);
     }
 
 
@@ -220,7 +236,6 @@ public class AdminController {
 
 
 
-
-
-
     }
+
+

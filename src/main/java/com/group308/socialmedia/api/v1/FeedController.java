@@ -127,17 +127,17 @@ public class FeedController {
 
         }
 
-      /*  for(int i=0; i<feedPostsWithInteraction.size(); i++) { // if user like that post or not, and same for dislike // to optimize that can be added on top separately
-            List<PostInteraction> likedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostLike(userId, 1);
-            List<Long> likedPostsIdsByUser = new ArrayList<>();
-            List<PostInteraction> dislikedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostDislike(userId, 1);
-            List<Long> dislikedPostsIdsByUser = new ArrayList<>();
-            for(int j=0; j<likedPostsByUser.size(); j++) {
-                likedPostsIdsByUser.add(likedPostsByUser.get(j).getPostId());
-            }
-            for(int j=0; j<dislikedPostsByUser.size(); j++) {
-                dislikedPostsIdsByUser.add(dislikedPostsByUser.get(j).getPostId());
-            }
+        /*List<PostInteraction> likedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostLike(userId, 1);
+        List<Long> likedPostsIdsByUser = new ArrayList<>();
+        List<PostInteraction> dislikedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostDislike(userId, 1);
+        List<Long> dislikedPostsIdsByUser = new ArrayList<>();
+        for(int j=0; j<likedPostsByUser.size(); j++) {
+            likedPostsIdsByUser.add(likedPostsByUser.get(j).getPostId());
+        }
+        for(int j=0; j<dislikedPostsByUser.size(); j++) {
+            dislikedPostsIdsByUser.add(dislikedPostsByUser.get(j).getPostId());
+        }
+        for(int i=0; i<feedPostsWithInteraction.size(); i++) { // if user like that post or not, and same for dislike // to optimize that can be added on top separately
             if (likedPostsIdsByUser.contains(feedPostsWithInteraction.get(i).getPostId())) {
                 feedPostsWithInteraction.get(i).setUserLikedIt(true);
             }
@@ -153,7 +153,10 @@ public class FeedController {
     }
 
 
-    @PostMapping("/{username}/report/{reportedPostId}")
+
+
+
+        @PostMapping("/{username}/report/{reportedPostId}")
     public ResponseEntity<RestResponse<String>> reportPost(@PathVariable("username") String username,
                                                                      @PathVariable("reportedPostId") long reportedPostId) {
         ReportedContent reportedContent = new ReportedContent();

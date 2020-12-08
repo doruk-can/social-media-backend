@@ -95,13 +95,21 @@ public class AdminController {
     }
 
     @PostMapping("/waitingReportedUsers/suspend/{username}")
-    public ResponseEntity<RestResponse<String>> suspendUser(@PathVariable("username") String username) {
+    public ResponseEntity<RestResponse<String>> suspendUser(@PathVariable("username") String username,
+                                                            @RequestParam int suspendedDaysAmount) {
 
        // applicationUserService.findByUsername(username).setActive(false);
+
+        Date currentDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(currentDate);
+        c.add(Calendar.DATE, suspendedDaysAmount);
+        Date currentDatePlus = c.getTime();
 
         ApplicationUser appUser = applicationUserService.findByUsername(username);
         applicationUserService.deleteById(appUser.getId());
         appUser.setActive(false);
+        appUser.setDeactivatedUntil(currentDatePlus);
         applicationUserService.save(appUser);
         return new ResponseEntity<>(RestResponse.of("User is suspended", Status.SUCCESS,""), HttpStatus.OK);
     }

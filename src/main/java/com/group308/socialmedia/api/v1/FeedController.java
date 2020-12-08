@@ -96,6 +96,22 @@ public class FeedController {
             tempFeedPostWithInteractionDto.setPostTopic(feedPosts.get(i).getPostTopic());
             tempFeedPostWithInteractionDto.setPostVideoURL(feedPosts.get(i).getPostVideoURL());
             tempFeedPostWithInteractionDto.setPostDate(feedPosts.get(i).getCreatedDate());// adding date to sort posts
+            long commentatorId = applicationUserService.findByUsername(username).getId();
+
+            try {  // finding if user liked that post or not to show blue like or dislike button
+                if (postInteractionService.findByPostIdAndCommentatorIdAndInteractionType(feedPosts.get(i).getId(), commentatorId
+                        , "likeordislike").getPostLike() == 1)
+                    tempFeedPostWithInteractionDto.setUserLikedIt(true);
+            } catch (Exception e) {
+            }
+            try {
+                if (postInteractionService.findByPostIdAndCommentatorIdAndInteractionType(feedPosts.get(i).getId(), commentatorId
+                        , "likeordislike").getPostDislike() == 1)
+                    tempFeedPostWithInteractionDto.setUserDislikedIt(true);
+            } catch (Exception e) {
+
+            }
+
 
             try { // if there is no like or dislike summing them up could cause error
                 long totalLike = postInteractionService.sumPostLike(feedPosts.get(i).getId());
@@ -127,25 +143,6 @@ public class FeedController {
 
         }
 
-        /*List<PostInteraction> likedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostLike(userId, 1);
-        List<Long> likedPostsIdsByUser = new ArrayList<>();
-        List<PostInteraction> dislikedPostsByUser = postInteractionService.findAllByCommentatorIdAndPostDislike(userId, 1);
-        List<Long> dislikedPostsIdsByUser = new ArrayList<>();
-        for(int j=0; j<likedPostsByUser.size(); j++) {
-            likedPostsIdsByUser.add(likedPostsByUser.get(j).getPostId());
-        }
-        for(int j=0; j<dislikedPostsByUser.size(); j++) {
-            dislikedPostsIdsByUser.add(dislikedPostsByUser.get(j).getPostId());
-        }
-        for(int i=0; i<feedPostsWithInteraction.size(); i++) { // if user like that post or not, and same for dislike // to optimize that can be added on top separately
-            if (likedPostsIdsByUser.contains(feedPostsWithInteraction.get(i).getPostId())) {
-                feedPostsWithInteraction.get(i).setUserLikedIt(true);
-            }
-            if (dislikedPostsIdsByUser.contains(feedPostsWithInteraction.get(i).getPostId())) {
-                feedPostsWithInteraction.get(i).setUserDislikedIt(true);
-            }
-        }*/
-
         feedPostsWithInteraction.sort(Comparator.comparing(FeedDto::getPostDate).reversed()); //sorting posts
 
 
@@ -170,6 +167,22 @@ public class FeedController {
         feedPostWithInteractionDto.setPostTopic(feedPost.getPostTopic());
         feedPostWithInteractionDto.setPostVideoURL(feedPost.getPostVideoURL());
         feedPostWithInteractionDto.setPostDate(feedPost.getCreatedDate());// adding date to sort posts
+
+        long commentatorId = applicationUserService.findByUsername(username).getId();
+
+        try {  // finding if user liked that post or not to show blue like or dislike button
+            if (postInteractionService.findByPostIdAndCommentatorIdAndInteractionType(feedPost.getId(), commentatorId
+                    , "likeordislike").getPostLike() == 1)
+                feedPostWithInteractionDto.setUserLikedIt(true);
+        } catch (Exception e) {
+        }
+        try {
+            if (postInteractionService.findByPostIdAndCommentatorIdAndInteractionType(feedPost.getId(), commentatorId
+                    , "likeordislike").getPostDislike() == 1)
+                feedPostWithInteractionDto.setUserDislikedIt(true);
+        } catch (Exception e) {
+
+        }
 
         try { // if there is no like or dislike summing them up could cause error
             long totalLike = postInteractionService.sumPostLike(feedPost.getId());
@@ -196,7 +209,8 @@ public class FeedController {
         }
 
         feedPostWithInteractionDto.setPostCommentDto(postCommentDtoList);
-        
+
+
 
         return new ResponseEntity<>(RestResponse.of(feedPostWithInteractionDto, Status.SUCCESS, ""), HttpStatus.OK);
     }

@@ -47,7 +47,7 @@ public class PostInteractionServiceImpl implements PostInteractionService {
         return postInteractionRepository.findAllByPostId(postId);
     }
 
-    /*@Override
+   /* @Override
     public List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId, long postLike) {
         return postInteractionRepository.findAllByCommentatorIdAndPostLike(commentatorId, postLike);
     }
@@ -56,6 +56,18 @@ public class PostInteractionServiceImpl implements PostInteractionService {
     public List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId, long postDislike) {
         return postInteractionRepository.findAllByCommentatorIdAndPostDislike(commentatorId, postDislike);
     }*/
+
+    /*@Override
+    public List<PostInteraction> findAllByCommentatorIdAndPostLike(long commentatorId) {
+        return postInteractionRepository.findAllByCommentatorIdAndPostLike(commentatorId);
+    }
+
+    @Override
+    public List<PostInteraction> findAllByCommentatorIdAndPostDislike(long commentatorId) {
+        return postInteractionRepository.findAllByCommentatorIdAndPostDislike(commentatorId);
+    }*/
+
+
 
 
 

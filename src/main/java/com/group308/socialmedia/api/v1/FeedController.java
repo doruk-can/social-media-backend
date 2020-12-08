@@ -153,10 +153,61 @@ public class FeedController {
     }
 
 
+    @GetMapping("/{username}/{postId}")
+    public ResponseEntity<RestResponse<FeedDto>> findSpecificFeedPost(@PathVariable("username") String username,
+                                                                      @PathVariable("postId") long postId) {
+
+        final Post feedPost = postService.findById(postId);
+
+        FeedDto feedPostWithInteractionDto = new FeedDto();
+
+        feedPostWithInteractionDto.setPostGeoId(feedPost.getPostGeoId());
+        feedPostWithInteractionDto.setPostGeoName(feedPost.getPostGeoName());
+        feedPostWithInteractionDto.setPostId(feedPost.getId());
+        feedPostWithInteractionDto.setPostImage(feedPost.getPostImage());
+        feedPostWithInteractionDto.setPostOwnerName(feedPost.getPostOwnerName());
+        feedPostWithInteractionDto.setPostText(feedPost.getPostText());
+        feedPostWithInteractionDto.setPostTopic(feedPost.getPostTopic());
+        feedPostWithInteractionDto.setPostVideoURL(feedPost.getPostVideoURL());
+        feedPostWithInteractionDto.setPostDate(feedPost.getCreatedDate());// adding date to sort posts
+
+        try { // if there is no like or dislike summing them up could cause error
+            long totalLike = postInteractionService.sumPostLike(feedPost.getId());
+            long totalDislike = postInteractionService.sumPostDislike(feedPost.getId());
+
+            feedPostWithInteractionDto.setTotalPostLike(totalLike); // setting total like
+            feedPostWithInteractionDto.setTotalPostDislike(totalDislike);
+        }
+        catch (Exception e) {
+
+        }
+
+        //finding comments of the post
+        List<PostInteraction> postInteractionList = postInteractionService.findAllByPostId(feedPost.getId());
+        List<PostCommentDto> postCommentDtoList = new ArrayList<>();
+        for(int j=0; j< postInteractionList.size(); j++) {
+            PostCommentDto tempPostCommentDto = new PostCommentDto();
+            tempPostCommentDto.setPostComment(postInteractionList.get(j).getPostComment());
+            String commentatorUsername = applicationUserService.findById(postInteractionList.get(j).getCommentatorId()).getUsername();
+            tempPostCommentDto.setCommentatorName(commentatorUsername);
+            if (tempPostCommentDto.getPostComment() == null)
+                continue;
+            postCommentDtoList.add(tempPostCommentDto);
+        }
+
+        feedPostWithInteractionDto.setPostCommentDto(postCommentDtoList);
+        
+
+        return new ResponseEntity<>(RestResponse.of(feedPostWithInteractionDto, Status.SUCCESS, ""), HttpStatus.OK);
+    }
 
 
 
-        @PostMapping("/{username}/report/{reportedPostId}")
+
+
+
+
+    @PostMapping("/{username}/report/{reportedPostId}")
     public ResponseEntity<RestResponse<String>> reportPost(@PathVariable("username") String username,
                                                                      @PathVariable("reportedPostId") long reportedPostId) {
         ReportedContent reportedContent = new ReportedContent();

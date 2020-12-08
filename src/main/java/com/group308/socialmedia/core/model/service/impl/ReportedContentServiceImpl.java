@@ -9,6 +9,8 @@ import com.group308.socialmedia.core.model.service.ReportedContentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ReportedContentServiceImpl implements ReportedContentService {
@@ -39,5 +41,11 @@ public class ReportedContentServiceImpl implements ReportedContentService {
     public ReportedContent findByReporterIdAndReportedPostId(long reporterId, long reportedPostId) {
            return reportedContentRepository.findByReporterIdAndReportedPostId(reporterId, reportedPostId);
     }
+
+    @Override
+    public List<ReportedContent> findAllByReportType(String reportType) {
+        return reportedContentRepository.findAllByReportType(reportType);
+    }
+
 
 }

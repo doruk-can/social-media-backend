@@ -7,6 +7,8 @@ import com.group308.socialmedia.core.model.service.ApplicationUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by isaozturk on 5.09.2019
  */
@@ -51,5 +53,11 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
     public void deleteById(Long id) {
         applicationUserRepository.deleteById(id);
     }
+
+    @Override
+    public List<ApplicationUser> findAllByUsernameContains(String keyword) {
+        return applicationUserRepository.findAllByUsernameContains(keyword);
+    }
+
 
 }

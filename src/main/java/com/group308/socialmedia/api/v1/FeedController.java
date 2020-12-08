@@ -178,7 +178,7 @@ public class FeedController {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(mailTo);
 
-        msg.setSubject("Report");
+        msg.setSubject("Report cs308");
         msg.setText("New post is reported. You may check them in app.");
 
         javaMailSender.send(msg);

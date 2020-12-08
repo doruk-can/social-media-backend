@@ -3,12 +3,12 @@ package com.group308.socialmedia.core.model.repository.user;
 
 import com.group308.socialmedia.core.model.domain.user.ApplicationUser;
 import com.group308.socialmedia.core.model.repository.BaseRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by isaozturk on 5.09.2019
- */
 public interface ApplicationUserRepository extends BaseRepository<ApplicationUser, Long> {
 
     Optional<ApplicationUser> findByUsername(String userName);
@@ -16,4 +16,7 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
     Optional<ApplicationUser> findByEmail(String email);
 
     Optional<ApplicationUser> findByEmailAndUsername(String email, String userName);
+
+    List<ApplicationUser> findAllByUsernameContains(String keyword);
+
 }

@@ -11,10 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -84,6 +81,15 @@ public class AdminController {
 
         return new ResponseEntity<>(RestResponse.of(reportedUsers, Status.SUCCESS, ""), HttpStatus.OK);
     }
+
+    @DeleteMapping("/waitingReportedPosts/delete/{postId}")
+    public ResponseEntity<RestResponse<String>> deletePost(@PathVariable("postId") long postId) {
+
+        postService.deleteById(postId);
+
+        return new ResponseEntity<>(RestResponse.of("Post is deleted successfully", Status.SUCCESS,""), HttpStatus.OK);
+    }
+
 
 
         @GetMapping("/search/{username}")

@@ -11,27 +11,18 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+/*
 @Slf4j
 @Component
+@AllArgsConstructor
 public class SchedulingConfigurationImpl {
 
-    ApplicationUserService applicationUserService;
-
-    ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-    @Scheduled(fixedDelay = 2000)
-    public void run() {
-
-        Runnable runnableTask = () -> {
-            try {
-               // TimeUnit.MILLISECONDS.sleep(300);
-                    System.out.println("afdsagfdsgdsfgdfsg  " + new Date()); //deneme
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
-
-        executorService.submit(runnableTask);
+    private final ApplicationUserService applicationUserService;
+    @Scheduled(fixedDelay = 10000L)
+    void someJob() {
+        if(applicationUserService.findByUsername("harun").getUsername().equals("Harun")) {
+            System.out.println("afdsagfdsgdsfgdfsg  " + new Date()); //deneme
+        }
+        System.out.println("sdafadsfsd");
     }
-}
+}*/

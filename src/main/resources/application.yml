@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: dev
+    active: prep
 jwt:
   header: Authorization
   secret: d5e863ecebffe75d0dd0fe1f1f773b22

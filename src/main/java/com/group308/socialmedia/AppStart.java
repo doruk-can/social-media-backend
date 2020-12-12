@@ -23,6 +23,7 @@ public class AppStart {
 
     public static void main(String[] args) {
         SpringApplication.run(AppStart.class, args);
+
     }
 
 
@@ -38,5 +39,9 @@ public class AppStart {
 
         return objectMapper;
     }
+
+
+
+
 
 }

@@ -158,20 +158,29 @@ public class UserProfileController {
         final String password = passwordService.encryptPassword(appUserDto.getPassword());
 
         try {
-           // String emailUser = applicationUserService.findByEmailAndUsername(appUserDto.getEmail(), appUserDto.getUsername()).getEmail();
-            String email = applicationUserService.findByEmail(appUserDto.getEmail()).getEmail();
-            return new ResponseEntity<>(RestResponse.of("User email already exists", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
+            String emailUser = applicationUserService.findByEmailAndUsername(appUserDto.getEmail(), appUserDto.getUsername()).getEmail(); // if its usernames email nothing happens
+        } catch (Exception e) {
+            try {
+                String email = applicationUserService.findByEmail(appUserDto.getEmail()).getEmail();
+                return new ResponseEntity<>(RestResponse.of("User email already exists", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
 
-        } catch(Exception e){
-            System.out.println("No error");
+            } catch(Exception b){
+                System.out.println("No error");
+            }
         }
 
         final ApplicationUser applicationUser = applicationUserService.findByUsername(appUserDto.getUsername());
 
         applicationUser.setId(applicationUserService.findByUsername(username).getId());
-        applicationUser.setPassword(password);
-        applicationUser.setEmail(appUserDto.getEmail());
-        applicationUser.setProfilePicture(appUserDto.getProfilePicture());
+        if(!(appUserDto.getPassword() == null || appUserDto.getPassword().equals(""))) { // checking if request contains null password
+            applicationUser.setPassword(password);
+        }
+        if(appUserDto.getEmail() !=null && !appUserDto.getEmail().equals("")) { // checking email is empty or not in json
+            applicationUser.setEmail(appUserDto.getEmail());
+        }
+        if(appUserDto.getProfilePicture() != null && !appUserDto.getProfilePicture().equals("")) {
+            applicationUser.setProfilePicture(appUserDto.getProfilePicture());
+        }
 
 
         applicationUserService.save(applicationUser);

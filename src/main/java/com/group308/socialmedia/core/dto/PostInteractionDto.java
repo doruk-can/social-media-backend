@@ -23,5 +23,5 @@ public class PostInteractionDto extends SuperDto {
 
     private String postComment;
 
-    private long commentatorId;
+    private String commentatorName;
 }

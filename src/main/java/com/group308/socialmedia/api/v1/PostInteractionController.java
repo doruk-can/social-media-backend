@@ -49,21 +49,23 @@ public class PostInteractionController {
         else
             postInteraction.setInteractionType("comment");
 
+        long commentatorId = applicationUserService.findByUsername(postInteractionDto.getCommentatorName()).getId();
+
 
         try {
             if(postComment == null) {  // if there is a comment request shouldnt include like or dislike
                 PostInteraction postInteractionCheck1 = postInteractionService.findByPostIdAndCommentatorIdAndInteractionType(   // checking if the user liked or disliked that post before
-                        postInteractionDto.getPostId(), postInteractionDto.getCommentatorId(), postInteraction.getInteractionType());
+                        postInteractionDto.getPostId(), commentatorId, postInteraction.getInteractionType());
                 if(postInteractionDto.getPostLike() == 1 && postInteractionDto.getPostLike() != postInteractionCheck1.getPostLike()) { // if user wants to like post which s/he disliked before
                     postInteractionService.deleteById(postInteractionCheck1.getId());
-                    postInteraction.setCommentatorId(postInteractionDto.getCommentatorId());
+                    postInteraction.setCommentatorId(commentatorId);
                     postInteraction.setPostLike(postInteractionDto.getPostLike());
                     postInteraction.setPostId(postInteractionDto.getPostId());
                     postInteractionService.save(postInteraction);
                     return new ResponseEntity<>(RestResponse.of("User liked the post that she disliked before", Status.SUCCESS, ""), HttpStatus.OK);
                 } else if (postInteractionDto.getPostLike() == 0 && postInteractionDto.getPostLike() != postInteractionCheck1.getPostLike()) {
                     postInteractionService.deleteById(postInteractionCheck1.getId());
-                    postInteraction.setCommentatorId(postInteractionDto.getCommentatorId());
+                    postInteraction.setCommentatorId(commentatorId);
                     postInteraction.setPostDislike(postInteractionDto.getPostDislike());
                     postInteraction.setPostId(postInteractionDto.getPostId());
                     postInteractionService.save(postInteraction);
@@ -75,7 +77,7 @@ public class PostInteractionController {
             }
             throw new Exception("There is no error");
         } catch(Exception e){
-            postInteraction.setCommentatorId(postInteractionDto.getCommentatorId());
+            postInteraction.setCommentatorId(commentatorId);
             if(postInteraction.getInteractionType().equals("comment"))
                 postInteraction.setPostComment(postInteractionDto.getPostComment());
             if(postInteraction.getInteractionType().equals("likeordislike")) {

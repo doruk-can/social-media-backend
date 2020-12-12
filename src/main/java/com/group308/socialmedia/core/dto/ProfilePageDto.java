@@ -15,6 +15,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class ProfilePageDto extends SuperDto {
 
+    private long userId;
+
     private String username;
 
     private String email;

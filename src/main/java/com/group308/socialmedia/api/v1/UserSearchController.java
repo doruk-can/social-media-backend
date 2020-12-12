@@ -9,21 +9,23 @@ import com.group308.socialmedia.core.model.domain.user.ApplicationUser;
 import com.group308.socialmedia.core.model.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "/api/v1/admin")
-public class AdminController {
+@RequestMapping(value = "/api/v1/search")
+public class UserSearchController {
 
     private final ApplicationUserService applicationUserService;
 
@@ -41,82 +43,7 @@ public class AdminController {
 
     private final PostMapper postMapper;
 
-    @GetMapping("/waitingReportedPosts")
-    public ResponseEntity<RestResponse<List<PostDto>>> getReportedPosts() {
-
-        List<ReportedContent> reportedContents = reportedContentService.findAllByReportType("post");
-        Set<Long> reportedPostIds = new HashSet<>();
-
-        for(int i=0; i< reportedContents.size(); i++) {
-            reportedPostIds.add(reportedContents.get(i).getReportedPostId()); //reported post ids
-        }
-        final List<Long> reportedPostIdList = new ArrayList<>(reportedPostIds);
-
-        List<Post> reportedPosts = new ArrayList<>();
-
-        for(int i=0; i<reportedPostIdList.size(); i++) {
-            reportedPosts.add(postService.findById(reportedPostIdList.get(i)));
-        }
-
-        final List<PostDto> reportedPostDtos = postMapper.asDtos(reportedPosts);
-
-        return new ResponseEntity<>(RestResponse.of(reportedPostDtos, Status.SUCCESS, ""), HttpStatus.OK);
-    }
-
-    @GetMapping("/waitingReportedUsers")
-    public ResponseEntity<RestResponse<List<RequestedUserDto>>> getReportedUsers() {
-
-        List<ReportedContent> reportedContents = reportedContentService.findAllByReportType("user");
-        Set<Long> reportedUserIds = new HashSet<>();
-
-        for(int i=0; i< reportedContents.size(); i++) {
-            reportedUserIds.add(reportedContents.get(i).getReportedUserId()); //reported user ids
-        }
-        final List<Long> reportedUserIdList = new ArrayList<>(reportedUserIds);
-
-        List<RequestedUserDto> reportedUsers = new ArrayList<>();
-
-        for(int i=0; i<reportedUserIdList.size(); i++) {
-            RequestedUserDto requestedUserDto = new RequestedUserDto();
-            requestedUserDto.setUsername(applicationUserService.findById(reportedUserIdList.get(i)).getUsername());
-            requestedUserDto.setUserId(applicationUserService.findById(reportedUserIdList.get(i)).getId());
-            reportedUsers.add(requestedUserDto);
-        }
-
-        return new ResponseEntity<>(RestResponse.of(reportedUsers, Status.SUCCESS, ""), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/waitingReportedPosts/delete/{postId}")
-    public ResponseEntity<RestResponse<String>> deletePost(@PathVariable("postId") long postId) {
-
-        postService.deleteById(postId);
-
-        return new ResponseEntity<>(RestResponse.of("Post is deleted successfully", Status.SUCCESS,""), HttpStatus.OK);
-    }
-
-    @PostMapping("/waitingReportedUsers/suspend/{username}")
-    public ResponseEntity<RestResponse<String>> suspendUser(@PathVariable("username") String username,
-                                                            @RequestParam int suspendedDaysAmount) {
-
-       // applicationUserService.findByUsername(username).setActive(false);
-
-        Date currentDate = new Date();
-        Calendar c = Calendar.getInstance();
-        c.setTime(currentDate);
-        c.add(Calendar.DATE, suspendedDaysAmount);
-        Date currentDatePlus = c.getTime();
-
-        ApplicationUser appUser = applicationUserService.findByUsername(username);
-        applicationUserService.deleteById(appUser.getId());
-        appUser.setActive(false);
-        appUser.setDeactivatedUntil(currentDatePlus);
-        applicationUserService.save(appUser);
-        return new ResponseEntity<>(RestResponse.of("User is suspended", Status.SUCCESS,""), HttpStatus.OK);
-    }
-
-
-
-        @GetMapping("/search/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<RestResponse<List<RequestedUserDto>>> findFeedPosts(@PathVariable("username") String username) {
 
         List<ApplicationUser> requestedUsers = applicationUserService.findAllByUsernameContains(username);
@@ -133,13 +60,13 @@ public class AdminController {
         return new ResponseEntity<>(RestResponse.of(requestedUserDtos, Status.SUCCESS, ""), HttpStatus.OK);
     }
 
-    @GetMapping("/search/{username}/profile")
+    @GetMapping("/{username}/profile")
     public ResponseEntity<RestResponse<ProfilePageDto>> getUserProfile(@PathVariable("username") String username) {
 
         ApplicationUser applicationUser = applicationUserService.findByUsername(username);
         ProfilePageDto profilePageDto = new ProfilePageDto();
-        profilePageDto.setUsername(applicationUser.getUsername());
         profilePageDto.setUserId(applicationUser.getId());
+        profilePageDto.setUsername(applicationUser.getUsername());
         profilePageDto.setEmail(applicationUser.getEmail());
         profilePageDto.setProfilePicture(applicationUser.getProfilePicture());
         profilePageDto.setActive(applicationUser.isActive());
@@ -244,7 +171,4 @@ public class AdminController {
     }
 
 
-
-    }
-
-
+}

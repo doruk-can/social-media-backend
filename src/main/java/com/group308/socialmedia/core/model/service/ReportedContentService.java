@@ -8,6 +8,8 @@ public interface ReportedContentService extends BaseService<ReportedContent>{
 
     ReportedContent findByReporterIdAndReportedPostId(long reporterId, long reportedPostId);
 
+    ReportedContent findByReporterIdAndReportedUserId(long reporterId, long reportedUserId);
+
     List<ReportedContent> findAllByReportType(String reportType);
 
 

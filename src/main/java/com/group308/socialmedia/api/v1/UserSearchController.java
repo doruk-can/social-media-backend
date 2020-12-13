@@ -11,10 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,6 +40,8 @@ public class UserSearchController {
 
     private final ReportedContentService reportedContentService;
 
+    private JavaMailSender javaMailSender;
+
     private final PostMapper postMapper;
 
     @GetMapping("/{username}")
@@ -50,7 +51,7 @@ public class UserSearchController {
         List<RequestedUserDto> requestedUserDtos = new ArrayList<>();
 
 
-        for( int i=0; i< requestedUsers.size(); i++) {
+        for (int i = 0; i < requestedUsers.size(); i++) {
             RequestedUserDto requestedUserDto = new RequestedUserDto(); // ?disardeyken hata veriyor
             requestedUserDto.setUserId(requestedUsers.get(i).getId());
             requestedUserDto.setUsername(requestedUsers.get(i).getUsername());
@@ -79,7 +80,7 @@ public class UserSearchController {
         List<Connection> followingUsers = connectionService.findAllByFollowingId(userId);
         String uname;
         List<String> followingUsernames = new ArrayList<>();
-        for(int i=0; i< followingUsers.size(); i++) {
+        for (int i = 0; i < followingUsers.size(); i++) {
             uname = applicationUserService.findById(followingUsers.get(i).getFollowerId()).getUsername();
             followingUsernames.add(uname);
         }
@@ -88,7 +89,7 @@ public class UserSearchController {
         //finding user's following users
         List<Connection> followers = connectionService.findAllByFollowerId(userId);
         List<String> followerNames = new ArrayList<>();
-        for(int i=0; i< followers.size(); i++) {
+        for (int i = 0; i < followers.size(); i++) {
             uname = applicationUserService.findById(followers.get(i).getFollowingId()).getUsername();
             followerNames.add(uname);
         }
@@ -97,7 +98,7 @@ public class UserSearchController {
         // adding subscribed topics and locations
         List<Subscription> subscriptionList = subscriptionService.findAllBySubscriberId(userId);
         List<Long> contentIdList = new ArrayList<>();  // finding subscribed posts, firstly finding content ids
-        for(int i=0; i< subscriptionList.size(); i++) {
+        for (int i = 0; i < subscriptionList.size(); i++) {
             contentIdList.add(subscriptionList.get(i).getSubscribedContentId());
         }
 
@@ -105,11 +106,11 @@ public class UserSearchController {
         List<String> subscribedLocationIdsList = new ArrayList<>();
 
         List<Content> contentList = new ArrayList<>();
-        for(int i=0; i< contentIdList.size(); i++) {
+        for (int i = 0; i < contentIdList.size(); i++) {
             contentList.add(contentService.findById(contentIdList.get(i)));
-            if(contentList.get(i).getContentType().equals("geo"))
+            if (contentList.get(i).getContentType().equals("geo"))
                 subscribedLocationIdsList.add(contentList.get(i).getGeoId());
-            else if(contentList.get(i).getContentType().equals("topic"))
+            else if (contentList.get(i).getContentType().equals("topic"))
                 subscribedTopicNamesList.add(contentList.get(i).getTopic());
         }
 
@@ -119,7 +120,7 @@ public class UserSearchController {
         // posts created before and their interactions
         final List<Post> feedPosts = postService.findAllByPostOwnerName(username);
         List<FeedDto> feedPostsWithInteraction = new ArrayList<>();
-        for(int i=0; i< feedPosts.size(); i++) {
+        for (int i = 0; i < feedPosts.size(); i++) {
             FeedDto tempFeedPostWithInteractionDto = new FeedDto();
             tempFeedPostWithInteractionDto.setPostGeoId(feedPosts.get(i).getPostGeoId());
             tempFeedPostWithInteractionDto.setPostGeoName(feedPosts.get(i).getPostGeoName());
@@ -137,15 +138,14 @@ public class UserSearchController {
 
                 tempFeedPostWithInteractionDto.setTotalPostLike(totalLike); // setting total like
                 tempFeedPostWithInteractionDto.setTotalPostDislike(totalDislike);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
 
             }
 
             //finding comments of the post
             List<PostInteraction> postInteractionList = postInteractionService.findAllByPostId(feedPosts.get(i).getId());
             List<PostCommentDto> postCommentDtoList = new ArrayList<>();
-            for(int j=0; j< postInteractionList.size(); j++) {
+            for (int j = 0; j < postInteractionList.size(); j++) {
                 PostCommentDto tempPostCommentDto = new PostCommentDto();
                 tempPostCommentDto.setPostComment(postInteractionList.get(j).getPostComment());
                 String commentatorUsername = applicationUserService.findById(postInteractionList.get(j).getCommentatorId()).getUsername();
@@ -168,6 +168,40 @@ public class UserSearchController {
 
 
         return new ResponseEntity<>(RestResponse.of(profilePageDto, Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/{reportedUsername}/profile/report/{reporterUsername}")
+    public ResponseEntity<RestResponse<String>> reportPost(@PathVariable("reportedUsername") String reportedUsername,
+                                                           @PathVariable("reporterUsername") String reporterUsername) {
+        ReportedContent reportedContent = new ReportedContent();
+        reportedContent.setReportType("user");
+        long reportedUserId = applicationUserService.findByUsername(reportedUsername).getId();
+        reportedContent.setReportedUserId(reportedUserId);
+
+        long userId = applicationUserService.findByUsername(reporterUsername).getId();
+        reportedContent.setReporterId(userId);
+
+        if (reportedContentService.findByReporterIdAndReportedUserId(userId, reportedUserId) == null) //checking if the post already reported
+            reportedContentService.save(reportedContent);
+        else
+            return new ResponseEntity<>(RestResponse.of("User is already reported", Status.SYSTEM_ERROR, ""), HttpStatus.NOT_FOUND);
+
+        sendEmail("drukcan@gmail.com");
+
+        return new ResponseEntity<>(RestResponse.of("User is reported", Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+    void sendEmail(String mailTo) {
+
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo(mailTo);
+
+        msg.setSubject("Report cs308");
+        msg.setText("User is reported. You may check them in app.");
+
+        javaMailSender.send(msg);
+
     }
 
 

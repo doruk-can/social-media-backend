@@ -43,9 +43,17 @@ public class ReportedContentServiceImpl implements ReportedContentService {
     }
 
     @Override
+    public ReportedContent findByReporterIdAndReportedUserId(long reporterId, long reportedUserId){
+        return reportedContentRepository.findByReporterIdAndReportedUserId(reporterId, reportedUserId);
+    }
+
+
+    @Override
     public List<ReportedContent> findAllByReportType(String reportType) {
         return reportedContentRepository.findAllByReportType(reportType);
     }
+
+
 
 
 }

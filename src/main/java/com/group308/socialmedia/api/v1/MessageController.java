@@ -2,7 +2,7 @@ package com.group308.socialmedia.api.v1;
 
 
 import com.group308.socialmedia.core.dto.MessageDto;
-import com.group308.socialmedia.storage.UserStorage;
+import com.group308.socialmedia.core.dto.NotificationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,6 +20,12 @@ public class MessageController {
         System.out.println("handling send message: " + message + " to: " + to);
 
         simpMessagingTemplate.convertAndSend("/topic/messages/" + to, message);
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setNotificationMessage("New message by " + message.getSender() + ": " + message.getMessage());
+        simpMessagingTemplate.convertAndSend("/topic/notification/" + to, notificationDto.getNotificationMessage());
     }
+
+
+
 }
 

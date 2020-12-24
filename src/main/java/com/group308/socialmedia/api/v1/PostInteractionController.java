@@ -1,6 +1,7 @@
 package com.group308.socialmedia.api.v1;
 
 
+import com.group308.socialmedia.core.dto.NotificationDto;
 import com.group308.socialmedia.core.dto.PostInteractionDto;
 import com.group308.socialmedia.core.dto.SubscriptionDto;
 import com.group308.socialmedia.core.dto.common.RestResponse;
@@ -12,8 +13,10 @@ import com.group308.socialmedia.core.model.domain.Subscription;
 import com.group308.socialmedia.core.model.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,9 @@ public class PostInteractionController {
 
     private final ApplicationUserService applicationUserService;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     @PostMapping("/")
     public ResponseEntity<RestResponse<String>> interactWithPost(@RequestBody PostInteractionDto postInteractionDto) throws IOException {
 
@@ -51,6 +57,10 @@ public class PostInteractionController {
 
         long commentatorId = applicationUserService.findByUsername(postInteractionDto.getCommentatorName()).getId();
 
+        NotificationDto notificationDto = new NotificationDto();
+
+        String postOwnerName = postService.findById(postInteractionDto.getPostId()).getPostOwnerName();
+
 
         try {
             if(postComment == null) {  // if there is a comment request shouldnt include like or dislike
@@ -62,6 +72,8 @@ public class PostInteractionController {
                     postInteraction.setPostLike(postInteractionDto.getPostLike());
                     postInteraction.setPostId(postInteractionDto.getPostId());
                     postInteractionService.save(postInteraction);
+                    notificationDto.setNotificationMessage( postInteractionDto.getCommentatorName() + " liked your post");
+                    simpMessagingTemplate.convertAndSend("/topic/notification/" + postOwnerName, notificationDto);
                     return new ResponseEntity<>(RestResponse.of("User liked the post that she disliked before", Status.SUCCESS, ""), HttpStatus.OK);
                 } else if (postInteractionDto.getPostLike() == 0 && postInteractionDto.getPostLike() != postInteractionCheck1.getPostLike()) {
                     postInteractionService.deleteById(postInteractionCheck1.getId());
@@ -78,11 +90,18 @@ public class PostInteractionController {
             throw new Exception("There is no error");
         } catch(Exception e){
             postInteraction.setCommentatorId(commentatorId);
-            if(postInteraction.getInteractionType().equals("comment"))
+            if(postInteraction.getInteractionType().equals("comment")) {
                 postInteraction.setPostComment(postInteractionDto.getPostComment());
+                notificationDto.setNotificationMessage(postInteractionDto.getCommentatorName() + " commented on your post");
+                simpMessagingTemplate.convertAndSend("/topic/notification/" + postOwnerName, notificationDto);
+            }
             if(postInteraction.getInteractionType().equals("likeordislike")) {
                 postInteraction.setPostLike(postInteractionDto.getPostLike());
                 postInteraction.setPostDislike(postInteractionDto.getPostDislike());
+                if (postInteractionDto.getPostLike() == 1) {
+                    notificationDto.setNotificationMessage(postInteractionDto.getCommentatorName() + " liked your post");
+                    simpMessagingTemplate.convertAndSend("/topic/notification/" + postOwnerName, notificationDto);
+                }
             }
             postInteraction.setPostId(postInteractionDto.getPostId());
 

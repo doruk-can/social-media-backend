@@ -1,6 +1,7 @@
 package com.group308.socialmedia.api.v1;
 
 import com.group308.socialmedia.core.dto.ConnectionDto;
+import com.group308.socialmedia.core.dto.NotificationDto;
 import com.group308.socialmedia.core.dto.PostDto;
 import com.group308.socialmedia.core.dto.common.RestResponse;
 import com.group308.socialmedia.core.dto.common.Status;
@@ -9,8 +10,10 @@ import com.group308.socialmedia.core.model.service.ApplicationUserService;
 import com.group308.socialmedia.core.model.service.ConnectionService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,6 +28,9 @@ private final ConnectionService connectionService;
 
 private final ApplicationUserService applicationUserService;
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
 
     @PostMapping("/follow")
     public ResponseEntity<RestResponse<String>> followUser(@RequestBody ConnectionDto connectionDto) throws IOException {
@@ -35,6 +41,8 @@ private final ApplicationUserService applicationUserService;
         connection.setFollowerId(followerId);
         connection.setFollowingId(followingId);
 
+        NotificationDto notificationDto = new NotificationDto();
+        notificationDto.setNotificationMessage(connectionDto.getFollowerName() + " started to follow you");
 
 
         try{
@@ -45,10 +53,13 @@ private final ApplicationUserService applicationUserService;
             }
         } catch(Exception e){
             connectionService.save(connection);
+            template.convertAndSend("/topic/notification/" + connectionDto.getFollowingName(), notificationDto ); // sending notification
             return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
         }
 
+
         connectionService.save(connection);
+        template.convertAndSend("/topic/notification/" + connectionDto.getFollowingName(), notificationDto ); // sending notificaiton
         return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
     }
 

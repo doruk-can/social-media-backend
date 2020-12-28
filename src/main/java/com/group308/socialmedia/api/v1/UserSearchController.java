@@ -45,7 +45,7 @@ public class UserSearchController {
     private final PostMapper postMapper;
 
     @GetMapping("/{username}")
-    public ResponseEntity<RestResponse<List<RequestedUserDto>>> findFeedPosts(@PathVariable("username") String username) {
+    public ResponseEntity<RestResponse<List<RequestedUserDto>>> findUsers(@PathVariable("username") String username) {
 
         List<ApplicationUser> requestedUsers = applicationUserService.findAllByUsernameContains(username);
         List<RequestedUserDto> requestedUserDtos = new ArrayList<>();
@@ -59,6 +59,38 @@ public class UserSearchController {
         }
 
         return new ResponseEntity<>(RestResponse.of(requestedUserDtos, Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+    @GetMapping("/topic/{topicName}")
+    public ResponseEntity<RestResponse<List<RequestedContentDto>>> findTopics(@PathVariable("topicName") String topicName) {
+
+        topicName = "#" + topicName;
+        List<Content> contentList = contentService.findAllByTopicContains(topicName);
+        List<RequestedContentDto> requestedContentDtos = new ArrayList<>();
+
+        for(int i=0; i < contentList.size(); i++) {
+            RequestedContentDto requestedContentDto = new RequestedContentDto();
+            requestedContentDto.setContentName(contentList.get(i).getTopic());
+            requestedContentDtos.add(requestedContentDto);
+        }
+
+        return new ResponseEntity<>(RestResponse.of(requestedContentDtos, Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+    @GetMapping("/location/{locationName}")
+    public ResponseEntity<RestResponse<List<RequestedContentDto>>> findLocations(@PathVariable("locationName") String locationName) {
+
+        List<Content> contentList = contentService.findAllByGeoNameContains(locationName);
+        List<RequestedContentDto> requestedContentDtos = new ArrayList<>();
+
+
+        for (int i = 0; i < contentList.size(); i++) {
+            RequestedContentDto requestedContentDto = new RequestedContentDto();
+            requestedContentDto.setContentName(contentList.get(i).getGeoName());
+            requestedContentDtos.add(requestedContentDto);
+        }
+
+        return new ResponseEntity<>(RestResponse.of(requestedContentDtos, Status.SUCCESS, ""), HttpStatus.OK);
     }
 
     @GetMapping("/{username}/profile")

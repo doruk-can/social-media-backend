@@ -7,6 +7,8 @@ import com.group308.socialmedia.core.model.service.ContentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ContentServiceImpl implements ContentService {
@@ -42,6 +44,16 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public Content findByGeoId(String geoId) {
         return contentRepository.findByGeoId(geoId).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public List<Content> findAllByTopicContains(String topic) {
+        return contentRepository.findAllByTopicContains(topic);
+    }
+
+    @Override
+    public List<Content> findAllByGeoNameContains(String geoName) {
+        return contentRepository.findAllByGeoNameContains(geoName);
     }
 
 }

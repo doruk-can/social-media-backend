@@ -117,7 +117,7 @@ public class AdminController {
 
 
         @GetMapping("/search/{username}")
-    public ResponseEntity<RestResponse<List<RequestedUserDto>>> findFeedPosts(@PathVariable("username") String username) {
+    public ResponseEntity<RestResponse<List<RequestedUserDto>>> findUsers(@PathVariable("username") String username) {
 
         List<ApplicationUser> requestedUsers = applicationUserService.findAllByUsernameContains(username);
         List<RequestedUserDto> requestedUserDtos = new ArrayList<>();

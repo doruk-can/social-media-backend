@@ -62,6 +62,7 @@ public class PostController {
         if (postDto.getPostGeoId() != null) {
             content2.setContentType("geo");
             content2.setGeoId(postDto.getPostGeoId());
+            content2.setGeoName(postDto.getPostGeoName());
             try {
                 contentService.findByGeoId(content2.getGeoId());
             } catch (Exception e) {

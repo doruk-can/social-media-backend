@@ -36,4 +36,7 @@ public class Content extends AbstractEntity {
         @Column(name = "geo_Id")
         private String geoId;
 
+        @Column(name = "geo_name")
+        private String geoName;
+
 }

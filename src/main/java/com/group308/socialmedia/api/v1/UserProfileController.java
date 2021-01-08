@@ -223,10 +223,100 @@ public class UserProfileController {
         return new ResponseEntity<>(RestResponse.of("Unsubscription from the location is completed", Status.SUCCESS,""), HttpStatus.OK);
     }
 
+    class IdWithCount{
+        long id;
+        long count;
+
+        public long getCount() {
+            return count;
+        }
+
+        public long getId() {
+            return id;
+        }
+    }
+
+
+    @GetMapping("/{username}/recommendations")
+    public ResponseEntity<RestResponse<List<RecommendationDto>>> findRecommendations(@PathVariable("username") String username) {
+
+        long userId = applicationUserService.findByUsername(username).getId();
+        List<Connection> followingUsers = connectionService.findAllByFollowerId(userId);
+        List<Long> followingIds = new ArrayList<>();
+        for(int i=0; i< followingUsers.size(); i++) { // finding users which are followed by the user
+            followingIds.add(followingUsers.get(i).getFollowingId());
+        }
+
+        Set<Long> allIds = new HashSet<>();
+        boolean isThatOkayToAdd = false;
+        for(int i=0; i < followingIds.size(); i++) {
+            List<Connection> followingUsers2 = connectionService.findAllByFollowerId(followingIds.get(i));
+            List<Long> followingIds2 = new ArrayList<>();
+            for(int j=0; j< followingUsers2.size(); j++) {
+                followingIds2.add(followingUsers2.get(j).getFollowingId());
+                isThatOkayToAdd = true;
+            }
+            if(isThatOkayToAdd)
+                allIds.addAll(followingIds2);
+            isThatOkayToAdd = false;
+        }
+
+        List<IdWithCount> idWithCounts = new ArrayList<>();
+        List<Long> allIdsList = new ArrayList<>();
+        allIdsList.addAll(allIds);
+
+        long count;
+        List<Long> idCounts = new ArrayList<>();
+        for(int i=0; i < allIdsList.size(); i++) {
+            IdWithCount idWithCount = new IdWithCount();
+            idWithCount.id = allIdsList.get(i);
+            count = 0;
+            List<Connection> necessaryConnections = connectionService.findAllByFollowingId(idWithCount.id);
+            for (int j=0; j< necessaryConnections.size(); j++) {
+                for(int k=0; k< followingIds.size(); k++){
+                    if(necessaryConnections.get(j).getFollowerId() == followingIds.get(k))
+                        idCounts.add(necessaryConnections.get(j).getFollowerId());
+                }
+            }
+
+            //List<Connection> followingUsersSecond; // ???? asagida tanimlayinca sorun
+            /*for(int j=0; j< followingIds.size(); j++) {
+                followingUsersSecond = connectionService.findAllByFollowerId(followingIds.get(i));
+                for(int k=0; k< followingUsersSecond.size(); k++) {
+                   if(followingUsersSecond.get(k).getFollowingId() == idWithCount.id) {
+                       count += 1;
+                       break;
+                   }
+                }
+            }*/
+            //idWithCount.count = count;
+            idWithCount.count = idCounts.size();
+            idWithCounts.add(idWithCount);
+        }
+        idWithCounts.sort(Comparator.comparing(IdWithCount::getCount).reversed());
 
 
 
+        List<RecommendationDto> recommendationDtos = new ArrayList<>();
+        for(int i=0; i < idWithCounts.size(); i++) {
+            RecommendationDto recommendationDto = new RecommendationDto();
+            recommendationDto.setUserId(idWithCounts.get(i).getId());
+            recommendationDto.setRecommendationCount(idWithCounts.get(i).getCount());
+            String uname = applicationUserService.findById(recommendationDto.getUserId()).getUsername();
+            String profilePic = applicationUserService.findById(recommendationDto.getUserId()).getProfilePicture();
+            recommendationDto.setUsername(uname);
+            recommendationDto.setProfileImage(profilePic);
+            recommendationDtos.add(recommendationDto);
+            if(i==3)
+                break;  // returning 4 is enough
+        }
 
+
+        System.out.println(recommendationDtos);
+
+
+        return new ResponseEntity<>(RestResponse.of(recommendationDtos, Status.SUCCESS, ""), HttpStatus.OK);
+    }
 
 
 

@@ -234,6 +234,14 @@ public class UserProfileController {
         public long getId() {
             return id;
         }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public void setCount(long count) {
+            this.count = count;
+        }
     }
 
 
@@ -265,34 +273,23 @@ public class UserProfileController {
         List<Long> allIdsList = new ArrayList<>();
         allIdsList.addAll(allIds);
 
-        long count;
-        List<Long> idCounts = new ArrayList<>();
-        for(int i=0; i < allIdsList.size(); i++) {
+
+        for(int i=0; i < allIdsList.size(); i++) {  // user's followings' followings
             IdWithCount idWithCount = new IdWithCount();
-            idWithCount.id = allIdsList.get(i);
-            count = 0;
-            List<Connection> necessaryConnections = connectionService.findAllByFollowingId(idWithCount.id);
-            for (int j=0; j< necessaryConnections.size(); j++) {
-                for(int k=0; k< followingIds.size(); k++){
-                    if(necessaryConnections.get(j).getFollowerId() == followingIds.get(k))
-                        idCounts.add(necessaryConnections.get(j).getFollowerId());
+            idWithCount.setId(allIdsList.get(i));
+            idWithCount.setCount(0);
+            for(int j=0; j<followingIds.size(); j++) {  // user's followings
+                try{
+                    connectionService.findByFollowerIdAndFollowingId(followingIds.get(j), allIdsList.get(i)); // looking if potential recommended user is followed by user's connection
+                    idWithCount.setCount(idWithCount.getCount() + 1); // if true recommendation count increases
+                } catch (Exception e) {
+
                 }
             }
-
-            //List<Connection> followingUsersSecond; // ???? asagida tanimlayinca sorun
-            /*for(int j=0; j< followingIds.size(); j++) {
-                followingUsersSecond = connectionService.findAllByFollowerId(followingIds.get(i));
-                for(int k=0; k< followingUsersSecond.size(); k++) {
-                   if(followingUsersSecond.get(k).getFollowingId() == idWithCount.id) {
-                       count += 1;
-                       break;
-                   }
-                }
-            }*/
-            //idWithCount.count = count;
-            idWithCount.count = idCounts.size();
             idWithCounts.add(idWithCount);
         }
+
+
         idWithCounts.sort(Comparator.comparing(IdWithCount::getCount).reversed());
 
 

@@ -116,7 +116,7 @@ public class AdminController {
 
 
 
-        @GetMapping("/search/{username}")
+    @GetMapping("/search/{username}")
     public ResponseEntity<RestResponse<List<RequestedUserDto>>> findUsers(@PathVariable("username") String username) {
 
         List<ApplicationUser> requestedUsers = applicationUserService.findAllByUsernameContains(username);

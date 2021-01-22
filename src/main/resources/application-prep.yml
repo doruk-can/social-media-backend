@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://206.81.17.79:5432/socialmediatest_db
     username: postgres
-    password: 123321dd
+    password: doruk123abc
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

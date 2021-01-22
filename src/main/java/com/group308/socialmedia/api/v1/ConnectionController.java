@@ -6,8 +6,10 @@ import com.group308.socialmedia.core.dto.PostDto;
 import com.group308.socialmedia.core.dto.common.RestResponse;
 import com.group308.socialmedia.core.dto.common.Status;
 import com.group308.socialmedia.core.model.domain.Connection;
+import com.group308.socialmedia.core.model.domain.OptionalNotification;
 import com.group308.socialmedia.core.model.service.ApplicationUserService;
 import com.group308.socialmedia.core.model.service.ConnectionService;
+import com.group308.socialmedia.core.model.service.OptionalNotificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -27,6 +31,9 @@ public class ConnectionController {
 private final ConnectionService connectionService;
 
 private final ApplicationUserService applicationUserService;
+
+private final OptionalNotificationService optionalNotificationService;
+
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -54,12 +61,38 @@ private final ApplicationUserService applicationUserService;
         } catch(Exception e){
             connectionService.save(connection);
             template.convertAndSend("/topic/notification/" + connectionDto.getFollowingName(), notificationDto ); // sending notification
+
+            //optional notification
+            Date date = new Date();
+            String str = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
+            OptionalNotification optionalNotification = new OptionalNotification();
+            optionalNotification.setNotificationContent(connectionDto.getFollowerName() + " is started to follow you!");
+            optionalNotification.setNotificationFrom(connectionDto.getFollowerName());
+            optionalNotification.setNotificationTo(connectionDto.getFollowingName());
+            optionalNotification.setNotificationDate(str);
+            optionalNotification.setIsSent(0);
+            optionalNotificationService.save(optionalNotification);
+            //
+
             return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
         }
 
 
         connectionService.save(connection);
         template.convertAndSend("/topic/notification/" + connectionDto.getFollowingName(), notificationDto ); // sending notificaiton
+
+        //optional notification
+        Date date = new Date();
+        String str = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(date);
+        OptionalNotification optionalNotification = new OptionalNotification();
+        optionalNotification.setNotificationContent(connectionDto.getFollowerName() + " is started to follow you!");
+        optionalNotification.setNotificationFrom(connectionDto.getFollowerName());
+        optionalNotification.setNotificationTo(connectionDto.getFollowingName());
+        optionalNotification.setNotificationDate(str);
+        optionalNotification.setIsSent(0);
+        optionalNotificationService.save(optionalNotification);
+        //
+
         return new ResponseEntity<>(RestResponse.of("Following is done", Status.SUCCESS,""), HttpStatus.OK);
     }
 

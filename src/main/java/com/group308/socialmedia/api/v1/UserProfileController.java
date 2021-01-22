@@ -148,6 +148,36 @@ public class UserProfileController {
         return new ResponseEntity<>(RestResponse.of(profilePageDto, Status.SUCCESS, ""), HttpStatus.OK);
     }
 
+
+    @DeleteMapping("/{username}/delete")
+    public ResponseEntity<RestResponse<String>> deleteProfile(@PathVariable("username") String username) {
+
+        long userId = applicationUserService.findByUsername(username).getId();
+        applicationUserService.deleteById(userId);
+
+        return new ResponseEntity<>(RestResponse.of("Account is deleted", Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/deactivate")
+    public ResponseEntity<RestResponse<String>> deactivateProfile(@PathVariable("username") String username,
+                                                                  @RequestParam int deactivatedDaysAmount) {
+
+        Date currentDate = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(currentDate);
+        c.add(Calendar.DATE, deactivatedDaysAmount);
+        Date currentDatePlus = c.getTime();
+
+        ApplicationUser appUser = applicationUserService.findByUsername(username);
+        applicationUserService.deleteById(appUser.getId());
+        appUser.setActive(false);
+        appUser.setDeactivatedUntil(currentDatePlus);
+        applicationUserService.save(appUser);
+
+
+        return new ResponseEntity<>(RestResponse.of("Account is deactivated", Status.SUCCESS, ""), HttpStatus.OK);
+    }
+
     @PutMapping("/{username}/edit")
     public ResponseEntity<RestResponse<String>> editProfile(@PathVariable("username") String username,
                                                             @RequestBody AppUserDto appUserDto) throws IOException {

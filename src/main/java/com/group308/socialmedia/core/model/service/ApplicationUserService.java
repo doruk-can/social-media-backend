@@ -18,5 +18,7 @@ public interface ApplicationUserService extends BaseService<ApplicationUser> {
 
     List<ApplicationUser> findAllByUsernameContains(String keyword);
 
+    List<ApplicationUser> findAllByActiveIsFalse();
+
 
 }

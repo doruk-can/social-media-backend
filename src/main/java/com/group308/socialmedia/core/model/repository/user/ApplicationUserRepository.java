@@ -19,4 +19,6 @@ public interface ApplicationUserRepository extends BaseRepository<ApplicationUse
 
     List<ApplicationUser> findAllByUsernameContains(String keyword);
 
+    List<ApplicationUser> findAllByActiveIsFalse();
+
 }

@@ -59,5 +59,12 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
         return applicationUserRepository.findAllByUsernameContains(keyword);
     }
 
+    @Override
+    public List<ApplicationUser> findAllByActiveIsFalse() {
+        return applicationUserRepository.findAllByActiveIsFalse();
+    }
+
+
+
 
 }

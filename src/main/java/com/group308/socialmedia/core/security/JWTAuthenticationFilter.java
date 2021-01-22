@@ -38,6 +38,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        if (request.getRequestURI().startsWith("/chat")){  // silinecek
+            chain.doFilter(request, response);
+            return;
+        }
+
 
 
         final String requestHeader = request.getHeader(jwtTokenHelper.getKeyFromProperties(JwtProperties::getHeader));

@@ -2,7 +2,7 @@
 
 Software engineering course term project
 
-Project description
+Project details
 
 - Users can create an account. Each user has a unique username and they can set a profile picture.
 In addition, users can delete their account or deactivate their accounts for a while

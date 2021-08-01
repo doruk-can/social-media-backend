@@ -7,6 +7,8 @@ import com.group308.socialmedia.core.model.service.ApplicationUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by isaozturk on 5.09.2019
  */
@@ -19,6 +21,16 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
     @Override
     public ApplicationUser findByUsername(String userName) {
         return applicationUserRepository.findByUsername(userName).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public ApplicationUser findByEmail(String email) {
+        return applicationUserRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
+    }
+
+    @Override
+    public ApplicationUser findByEmailAndUsername(String email, String userName) {
+        return applicationUserRepository.findByEmailAndUsername(email, userName).orElseThrow(()->new ResourceNotFoundException("NotFound.general.message"));
     }
 
     @Override
@@ -41,4 +53,18 @@ class ApplicationUserServiceImpl implements ApplicationUserService {
     public void deleteById(Long id) {
         applicationUserRepository.deleteById(id);
     }
+
+    @Override
+    public List<ApplicationUser> findAllByUsernameContains(String keyword) {
+        return applicationUserRepository.findAllByUsernameContains(keyword);
+    }
+
+    @Override
+    public List<ApplicationUser> findAllByActiveIsFalse() {
+        return applicationUserRepository.findAllByActiveIsFalse();
+    }
+
+
+
+
 }

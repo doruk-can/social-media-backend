@@ -19,10 +19,31 @@ import javax.persistence.*;
                 @org.hibernate.annotations.Parameter(name = "initial_value", value = "1"),
                 @org.hibernate.annotations.Parameter(name = "increment_size", value = "1"),
                 @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM
-                        , value = "group_seq")
+                        , value = "post_seq")
         }
 )
 public class Post extends AbstractEntity {
+
+    @Column(name="post_owner_name")
+    private String postOwnerName;
+
+    @Column(name = "post_image")
+    private String postImage;
+
+    @Column(name = "post_text")
+    private String postText;
+
+    @Column(name = "post_video_url")
+    private String postVideoURL;
+
+    @Column(name = "post_topic")
+    private String postTopic;
+
+    @Column(name = "post_geo_id")
+    private String postGeoId;
+
+    @Column(name = "post_geo_name")
+    private String postGeoName;
 
 
 }

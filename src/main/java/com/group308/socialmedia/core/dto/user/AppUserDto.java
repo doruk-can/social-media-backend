@@ -1,8 +1,6 @@
 package com.group308.socialmedia.core.dto.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,6 +8,8 @@ import java.util.Date;
 /**
  * Created by isaozturk on 1.08.2020
  */
+
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class AppUserDto implements Serializable {
 
     private String password;
 
-    /*private String email;
+    private String email;
 
     private String profilePicture;
 
@@ -27,5 +27,5 @@ public class AppUserDto implements Serializable {
 
     private boolean active;
 
-    private Date deactivatedUntil;*/
+    private Date deactivatedUntil;
 }

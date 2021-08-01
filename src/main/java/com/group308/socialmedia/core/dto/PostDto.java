@@ -6,13 +6,23 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
-
 @Data
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class PostDto extends SuperDto {
 
+    private String postOwnerName;
 
+    private String postText;
+
+    private String postImage;
+
+    private String postTopic;
+
+    private String postVideoURL;
+
+    private String postGeoId;
+
+    private String postGeoName;
 }
